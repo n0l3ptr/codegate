@@ -3,6 +3,8 @@ import angr
 from claripy import BVS, Or, And
 import simuvex
 
+#auto_load_libs option is set to false which tells the loader to not automatically load
+#requested libraries. This is so angr doesn't analyze paths in shared libraries
 p = angr.Project("angrybird", load_options={'auto_load_libs' : False})
 
 firstfind = 0x400778 #set eax to 1 and continue
@@ -13,8 +15,9 @@ fourthfind = 0x4007c2 # now we are up to stdin must be 21 bytes
 init = p.factory.entry_state()
 
 print ("Exploring..")
-
+#speeds up angr quite a bit
 init.options.discard("LAZY_SOLVES")
+
 pg = p.factory.path_group(init, immutable=False)
 pg.explore(find=firstfind)
 s = pg.found[0].state
